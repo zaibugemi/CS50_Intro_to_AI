@@ -133,7 +133,7 @@ def minimax(board):
     if player(board) == X:
         v = (-1, None)
         for action in actions(board):
-            min_val = min_value(result(board, action))
+            min_val = min_value(result(board, action), -1, 1)
             val = max(v[0], min_val)
             if val == min_val:
                 v = (min_val, action)
@@ -143,30 +143,34 @@ def minimax(board):
     if player(board) == O:
         v = (1, None)
         for action in actions(board):
-            max_val = max_value(result(board, action))
+            max_val = max_value(result(board, action), -1, 1)
             val = min(v[0], max_val)
             if val == max_val:
                 v = (max_val, action)
         return v[1]
 
 
-def max_value(board):
+def max_value(board, alpha, beta):
     if terminal(board):
         return utility(board)
 
     v = -1
     for action in actions(board):
-        v = max(v, min_value(result(board, action)))
-
+        v = max(v, min_value(result(board, action), alpha, beta))
+        alpha = max(v, alpha)
+        if beta <= alpha:
+            break
     return v
 
 
-def min_value(board):
+def min_value(board, alpha, beta):
     if terminal(board):
         return utility(board)
 
     v = 1
     for action in actions(board):
-        v = min(v, max_value(result(board, action)))
-
+        v = min(v, max_value(result(board, action), alpha, beta))
+        beta = min(v, beta)
+        if beta <= alpha:
+            break
     return v
